@@ -19,7 +19,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(juce)
 
 juce_add_plugin(AtFirstJuice
-    COMPANY_NAME "garyanewsome"
+    COMPANY_NAME "Gary A. Newsome"
     COMPANY_COPYRIGHT "Gary A. Newsome"
     BUNDLE_ID "com.garyanewsome.AtFirstJuice"
     IS_SYNTH TRUE
