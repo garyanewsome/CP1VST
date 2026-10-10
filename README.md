@@ -1,4 +1,6 @@
-# AtFirstJuice
+# CP1
+
+_Formerly AtFirstJuice._
 
 A professional, polyphonic analog-modeled software synthesizer built in C++ using the [JUCE Framework](https://juce.com/) and CMake.
 
@@ -24,7 +26,7 @@ A professional, polyphonic analog-modeled software synthesizer built in C++ usin
 
 **Presets**
 - Factory starters (also exposed as host programs) and user presets saved from the header.
-- User presets are stored as `.afjpreset` files in `~/Library/Application Support/AtFirstJuice/Presets/`.
+- User presets are stored as `.cp1preset` files in `~/Library/Application Support/CP1/Presets/`.
 
 ## Architecture & Code Map
 
@@ -46,13 +48,13 @@ cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-The resulting plugins will be placed in `build/AtFirstJuice_artefacts/Release/`.
+The resulting plugins will be placed in `build/CP1_artefacts/Release/`.
 
 ## How To Run Without A DAW
 
 Run the interactive standalone preview directly:
 ```bash
-open build/AtFirstJuice_artefacts/Release/Standalone/AtFirstJuice.app
+open build/CP1_artefacts/Release/Standalone/CP1.app
 ```
 
 ## Author

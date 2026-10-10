@@ -5,12 +5,12 @@
 #include "CyberLookAndFeel.h"
 
 //==============================================================================
-class AtFirstJuiceAudioProcessorEditor  : public juce::AudioProcessorEditor,
+class CP1AudioProcessorEditor  : public juce::AudioProcessorEditor,
                                           private juce::Timer
 {
 public:
-    AtFirstJuiceAudioProcessorEditor (AtFirstJuiceAudioProcessor&);
-    ~AtFirstJuiceAudioProcessorEditor() override;
+    CP1AudioProcessorEditor (CP1AudioProcessor&);
+    ~CP1AudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -38,7 +38,7 @@ private:
     void addControl (Control&, const juce::String& paramId, const juce::String& title,
                      const juce::String& tooltip);
 
-    AtFirstJuiceAudioProcessor& audioProcessor;
+    CP1AudioProcessor& audioProcessor;
 
     CyberLookAndFeel lookAndFeel;
     juce::TooltipWindow tooltipWindow { this, 350 };
@@ -72,5 +72,5 @@ private:
     juce::Rectangle<int> scopeBounds;
     std::array<float, 400> scopeData {};
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AtFirstJuiceAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CP1AudioProcessorEditor)
 };

@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.15)
 set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "Target architectures for macOS" FORCE)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "14.0" CACHE STRING "Target macOS deployment version" FORCE)
 
-project(AtFirstJuice VERSION 1.0.0)
+project(CP1 VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,10 +18,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(juce)
 
-juce_add_plugin(AtFirstJuice
+juce_add_plugin(CP1
     COMPANY_NAME "Gary A. Newsome"
     COMPANY_COPYRIGHT "Gary A. Newsome"
-    BUNDLE_ID "com.garyanewsome.AtFirstJuice"
+    BUNDLE_ID "com.garyanewsome.CP1"
     IS_SYNTH TRUE
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT FALSE
@@ -29,14 +29,14 @@ juce_add_plugin(AtFirstJuice
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
     COPY_PLUGIN_AFTER_BUILD TRUE
     PLUGIN_MANUFACTURER_CODE "Gary"
-    PLUGIN_CODE "AFJ "
+    PLUGIN_CODE "CP1 "
     FORMATS VST3 AU Standalone
-    PRODUCT_NAME "AtFirstJuice"
+    PRODUCT_NAME "CP1"
 )
 
-juce_generate_juce_header(AtFirstJuice)
+juce_generate_juce_header(CP1)
 
-target_sources(AtFirstJuice
+target_sources(CP1
     PRIVATE
         PluginProcessor.cpp
         PluginProcessor.h
@@ -46,14 +46,14 @@ target_sources(AtFirstJuice
         Presets.h
 )
 
-target_compile_definitions(AtFirstJuice
+target_compile_definitions(CP1
     PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
-target_link_libraries(AtFirstJuice
+target_link_libraries(CP1
     PRIVATE
         juce::juce_audio_utils
         juce::juce_dsp

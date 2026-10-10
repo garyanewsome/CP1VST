@@ -3,7 +3,7 @@
 #include "Presets.h"
 
 //==============================================================================
-AtFirstJuiceVoice::AtFirstJuiceVoice(const VoiceParams& p)
+CP1Voice::CP1Voice(const VoiceParams& p)
     : voiceParams(p)
 {
     // Basic envelope to prevent clicking on noteOn/noteOff
@@ -15,12 +15,12 @@ AtFirstJuiceVoice::AtFirstJuiceVoice(const VoiceParams& p)
     adsr.setParameters(params);
 }
 
-bool AtFirstJuiceVoice::canPlaySound(juce::SynthesiserSound* sound)
+bool CP1Voice::canPlaySound(juce::SynthesiserSound* sound)
 {
-    return dynamic_cast<AtFirstJuiceSound*>(sound) != nullptr;
+    return dynamic_cast<CP1Sound*>(sound) != nullptr;
 }
 
-void AtFirstJuiceVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/)
+void CP1Voice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/)
 {
     adsr.setSampleRate(getSampleRate());
     adsr.noteOn();
@@ -53,7 +53,7 @@ void AtFirstJuiceVoice::startNote(int midiNoteNumber, float velocity, juce::Synt
     delta1 = (cyclesPerSecond / getSampleRate()) * 2.0 * juce::MathConstants<double>::pi;
 }
 
-void AtFirstJuiceVoice::stopNote(float /*velocity*/, bool allowTailOff)
+void CP1Voice::stopNote(float /*velocity*/, bool allowTailOff)
 {
     if (allowTailOff)
     {
@@ -68,10 +68,10 @@ void AtFirstJuiceVoice::stopNote(float /*velocity*/, bool allowTailOff)
     }
 }
 
-void AtFirstJuiceVoice::pitchWheelMoved(int) {}
-void AtFirstJuiceVoice::controllerMoved(int, int) {}
+void CP1Voice::pitchWheelMoved(int) {}
+void CP1Voice::controllerMoved(int, int) {}
 
-float AtFirstJuiceVoice::processLadder(float* ladder, float in, float cutoffHz, float res, int type, double sampleRate)
+float CP1Voice::processLadder(float* ladder, float in, float cutoffHz, float res, int type, double sampleRate)
 {
     // One-pole coefficient from cutoff, resonance feedback from pole 4, tanh
     // saturation in every stage (Huovilainen-style), 12 dB output at pole 2.
@@ -94,7 +94,7 @@ float AtFirstJuiceVoice::processLadder(float* ladder, float in, float cutoffHz, 
     }
 }
 
-float AtFirstJuiceVoice::noiseSample(int choice, PinkState& st)
+float CP1Voice::noiseSample(int choice, PinkState& st)
 {
     const float white = rng.nextFloat() * 2.0f - 1.0f;
     if (choice == 3) // White
@@ -107,7 +107,7 @@ float AtFirstJuiceVoice::noiseSample(int choice, PinkState& st)
     return (st.b0 + st.b1 + st.b2 + white * 0.1848f) * 0.25f;
 }
 
-void AtFirstJuiceVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
+void CP1Voice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
     if (!isVoiceActive())
         return;
@@ -277,7 +277,7 @@ void AtFirstJuiceVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, 
 }
 
 //==============================================================================
-AtFirstJuiceAudioProcessor::AtFirstJuiceAudioProcessor()
+CP1AudioProcessor::CP1AudioProcessor()
     : juce::AudioProcessor(BusesProperties()
                            .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
       apvts(*this, nullptr, "Parameters", createParameterLayout())
@@ -285,7 +285,7 @@ AtFirstJuiceAudioProcessor::AtFirstJuiceAudioProcessor()
     for (auto& v : scopeBuffer)
         v.store(0.0f, std::memory_order_relaxed);
 
-    synth.addSound(new AtFirstJuiceSound());
+    synth.addSound(new CP1Sound());
     
     VoiceParams waveParams;
     waveParams.performance = &performance;
@@ -316,18 +316,18 @@ AtFirstJuiceAudioProcessor::AtFirstJuiceAudioProcessor()
     
     // Add polyphonic voices
     for (int i = 0; i < 8; ++i)
-        synth.addVoice(new AtFirstJuiceVoice(waveParams));
+        synth.addVoice(new CP1Voice(waveParams));
         
     masterVolumeParam = apvts.getRawParameterValue("MASTER_VOL");
     lfoRate = apvts.getRawParameterValue("LFO_RATE");
     distortionDepth = apvts.getRawParameterValue("DISTORTION");
 }
 
-AtFirstJuiceAudioProcessor::~AtFirstJuiceAudioProcessor()
+CP1AudioProcessor::~CP1AudioProcessor()
 {
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout AtFirstJuiceAudioProcessor::createParameterLayout()
+juce::AudioProcessorValueTreeState::ParameterLayout CP1AudioProcessor::createParameterLayout()
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
@@ -403,42 +403,42 @@ juce::AudioProcessorValueTreeState::ParameterLayout AtFirstJuiceAudioProcessor::
 }
 
 //==============================================================================
-const juce::String AtFirstJuiceAudioProcessor::getName() const
+const juce::String CP1AudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool AtFirstJuiceAudioProcessor::acceptsMidi() const
+bool CP1AudioProcessor::acceptsMidi() const
 {
     return true;
 }
 
-bool AtFirstJuiceAudioProcessor::producesMidi() const
+bool CP1AudioProcessor::producesMidi() const
 {
     return false;
 }
 
-bool AtFirstJuiceAudioProcessor::isMidiEffect() const
+bool CP1AudioProcessor::isMidiEffect() const
 {
     return false;
 }
 
-double AtFirstJuiceAudioProcessor::getTailLengthSeconds() const
+double CP1AudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int AtFirstJuiceAudioProcessor::getNumPrograms()
+int CP1AudioProcessor::getNumPrograms()
 {
     return (int) Presets::factory().size();
 }
 
-int AtFirstJuiceAudioProcessor::getCurrentProgram()
+int CP1AudioProcessor::getCurrentProgram()
 {
     return currentProgram;
 }
 
-void AtFirstJuiceAudioProcessor::setCurrentProgram(int index)
+void CP1AudioProcessor::setCurrentProgram(int index)
 {
     if (index < 0 || index >= getNumPrograms())
         return;
@@ -446,17 +446,17 @@ void AtFirstJuiceAudioProcessor::setCurrentProgram(int index)
     Presets::applyFactory(*this, index);
 }
 
-const juce::String AtFirstJuiceAudioProcessor::getProgramName(int index)
+const juce::String CP1AudioProcessor::getProgramName(int index)
 {
     if (index < 0 || index >= getNumPrograms())
         return {};
     return Presets::factory()[(size_t) index].name;
 }
 
-void AtFirstJuiceAudioProcessor::changeProgramName(int /*index*/, const juce::String& /*newName*/) {}
+void CP1AudioProcessor::changeProgramName(int /*index*/, const juce::String& /*newName*/) {}
 
 //==============================================================================
-void AtFirstJuiceAudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/)
+void CP1AudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/)
 {
     // Inform synthesiser of sample rate changes
     synth.setCurrentPlaybackSampleRate(sampleRate);
@@ -465,11 +465,11 @@ void AtFirstJuiceAudioProcessor::prepareToPlay(double sampleRate, int /*samplesP
     lfoPhase = 0.0;
 }
 
-void AtFirstJuiceAudioProcessor::releaseResources()
+void CP1AudioProcessor::releaseResources()
 {
 }
 
-bool AtFirstJuiceAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+bool CP1AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
@@ -478,7 +478,7 @@ bool AtFirstJuiceAudioProcessor::isBusesLayoutSupported(const BusesLayout& layou
     return true;
 }
 
-void AtFirstJuiceAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void CP1AudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -546,18 +546,18 @@ void AtFirstJuiceAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, 
 }
 
 //==============================================================================
-bool AtFirstJuiceAudioProcessor::hasEditor() const
+bool CP1AudioProcessor::hasEditor() const
 {
     return true;
 }
 
-juce::AudioProcessorEditor* AtFirstJuiceAudioProcessor::createEditor()
+juce::AudioProcessorEditor* CP1AudioProcessor::createEditor()
 {
-    return new AtFirstJuiceAudioProcessorEditor(*this);
+    return new CP1AudioProcessorEditor(*this);
 }
 
 //==============================================================================
-void AtFirstJuiceAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
+void CP1AudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
     // Serialize parameter values
     auto state = apvts.copyState();
@@ -565,7 +565,7 @@ void AtFirstJuiceAudioProcessor::getStateInformation(juce::MemoryBlock& destData
     copyXmlToBinary(*xml, destData);
 }
 
-void AtFirstJuiceAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
+void CP1AudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     // Deserialize parameter values
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
@@ -579,5 +579,5 @@ void AtFirstJuiceAudioProcessor::setStateInformation(const void* data, int sizeI
 // This creates new instances of the plugin
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new AtFirstJuiceAudioProcessor();
+    return new CP1AudioProcessor();
 }

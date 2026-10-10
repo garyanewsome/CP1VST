@@ -117,13 +117,13 @@ namespace Presets
     inline juce::File userDirectory()
     {
         return juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory)
-                   .getChildFile ("AtFirstJuice").getChildFile ("Presets");
+                   .getChildFile ("CP1").getChildFile ("Presets");
     }
 
     inline juce::Array<juce::File> userPresetFiles()
     {
         juce::Array<juce::File> files;
-        userDirectory().findChildFiles (files, juce::File::findFiles, false, "*.afjpreset");
+        userDirectory().findChildFiles (files, juce::File::findFiles, false, "*.cp1preset");
         files.sort();
         return files;
     }
@@ -134,7 +134,7 @@ namespace Presets
         if (! dir.createDirectory().wasOk())
             return false;
 
-        juce::XmlElement xml ("AtFirstJuicePreset");
+        juce::XmlElement xml ("CP1Preset");
         xml.setAttribute ("name", name);
         for (auto* p : proc.getParameters())
             if (auto* ranged = dynamic_cast<juce::RangedAudioParameter*> (p))
@@ -145,13 +145,13 @@ namespace Presets
                     e->setAttribute ("value", (double) ranged->convertFrom0to1 (ranged->getValue()));
                 }
 
-        return xml.writeTo (dir.getChildFile (juce::File::createLegalFileName (name) + ".afjpreset"));
+        return xml.writeTo (dir.getChildFile (juce::File::createLegalFileName (name) + ".cp1preset"));
     }
 
     inline bool loadUser (juce::AudioProcessor& proc, const juce::File& file)
     {
         auto xml = juce::XmlDocument::parse (file);
-        if (xml == nullptr || ! xml->hasTagName ("AtFirstJuicePreset"))
+        if (xml == nullptr || ! xml->hasTagName ("CP1Preset"))
             return false;
 
         std::vector<std::pair<juce::String, float>> values;

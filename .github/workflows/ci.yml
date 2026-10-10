@@ -67,20 +67,20 @@ jobs:
         run: |
           set -e
           for f in \
-            build/AtFirstJuice_artefacts/Release/VST3/AtFirstJuice.vst3/Contents/MacOS/AtFirstJuice \
-            build/AtFirstJuice_artefacts/Release/AU/AtFirstJuice.component/Contents/MacOS/AtFirstJuice \
-            build/AtFirstJuice_artefacts/Release/Standalone/AtFirstJuice.app/Contents/MacOS/AtFirstJuice; do
+            build/CP1_artefacts/Release/VST3/CP1.vst3/Contents/MacOS/CP1 \
+            build/CP1_artefacts/Release/AU/CP1.component/Contents/MacOS/CP1 \
+            build/CP1_artefacts/Release/Standalone/CP1.app/Contents/MacOS/CP1; do
             echo "== $f =="
             lipo -info "$f" | grep -q "x86_64 arm64" || { echo "not universal: $f"; exit 1; }
           done
 
       - name: Package
         run: |
-          cd build/AtFirstJuice_artefacts/Release
-          zip -r "${GITHUB_WORKSPACE}/AtFirstJuice-macOS-universal.zip" VST3 AU Standalone
+          cd build/CP1_artefacts/Release
+          zip -r "${GITHUB_WORKSPACE}/CP1-macOS-universal.zip" VST3 AU Standalone
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          files: AtFirstJuice-macOS-universal.zip
+          files: CP1-macOS-universal.zip
           generate_release_notes: true

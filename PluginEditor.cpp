@@ -80,8 +80,8 @@ FromText dbFrom() {
 } // namespace
 
 //==============================================================================
-AtFirstJuiceAudioProcessorEditor::AtFirstJuiceAudioProcessorEditor(
-    AtFirstJuiceAudioProcessor &p)
+CP1AudioProcessorEditor::CP1AudioProcessorEditor(
+    CP1AudioProcessor &p)
     : AudioProcessorEditor(&p), audioProcessor(p),
       midiKeyboard(p.keyboardState,
                    juce::MidiKeyboardComponent::horizontalKeyboard) {
@@ -351,12 +351,12 @@ AtFirstJuiceAudioProcessorEditor::AtFirstJuiceAudioProcessorEditor(
   setSize(kBaseWidth, kBaseHeight);
 }
 
-AtFirstJuiceAudioProcessorEditor::~AtFirstJuiceAudioProcessorEditor() {
+CP1AudioProcessorEditor::~CP1AudioProcessorEditor() {
   stopTimer();
   setLookAndFeel(nullptr);
 }
 
-void AtFirstJuiceAudioProcessorEditor::refreshPresetList(
+void CP1AudioProcessorEditor::refreshPresetList(
     const juce::String &selectName) {
   presetBox.clear(juce::dontSendNotification);
   int id = 1;
@@ -379,7 +379,7 @@ void AtFirstJuiceAudioProcessorEditor::refreshPresetList(
   }
 }
 
-void AtFirstJuiceAudioProcessorEditor::stepPreset(int delta) {
+void CP1AudioProcessorEditor::stepPreset(int delta) {
   const int count = presetBox.getNumItems();
   if (count == 0)
     return;
@@ -394,7 +394,7 @@ void AtFirstJuiceAudioProcessorEditor::stepPreset(int delta) {
   }
 }
 
-void AtFirstJuiceAudioProcessorEditor::promptSavePreset() {
+void CP1AudioProcessorEditor::promptSavePreset() {
   auto *w = new juce::AlertWindow("Save preset", "Name this sound:",
                                   juce::MessageBoxIconType::NoIcon, this);
   w->addTextEditor("name", "My Patch");
@@ -413,13 +413,13 @@ void AtFirstJuiceAudioProcessorEditor::promptSavePreset() {
       true);
 }
 
-void AtFirstJuiceAudioProcessorEditor::timerCallback() {
+void CP1AudioProcessorEditor::timerCallback() {
   // Scope: grab the latest samples, trigger on a rising zero crossing so a
   // steady tone sits still on screen.
   {
     constexpr int window = 1200, n = (int)400;
     const unsigned w = audioProcessor.scopeWritePos.load(std::memory_order_acquire);
-    const int size = AtFirstJuiceAudioProcessor::scopeSize;
+    const int size = CP1AudioProcessor::scopeSize;
     auto at = [&](int back) {
       return audioProcessor.scopeBuffer[(w - 1u - (unsigned)back) % (unsigned)size]
           .load(std::memory_order_relaxed);
@@ -444,7 +444,7 @@ void AtFirstJuiceAudioProcessorEditor::timerCallback() {
                         juce::dontSendNotification);
 }
 
-void AtFirstJuiceAudioProcessorEditor::addControl(
+void CP1AudioProcessorEditor::addControl(
     Control &c, const juce::String &paramId, const juce::String &title,
     const juce::String &tooltip) {
   c.slider.setSliderStyle(juce::Slider::LinearVertical);
@@ -462,7 +462,7 @@ void AtFirstJuiceAudioProcessorEditor::addControl(
 }
 
 //==============================================================================
-void AtFirstJuiceAudioProcessorEditor::paint(juce::Graphics &g) {
+void CP1AudioProcessorEditor::paint(juce::Graphics &g) {
   const float scale = (float)getWidth() / (float)kBaseWidth;
   const auto cyan = CyberLookAndFeel::cyan;
   const auto magenta = CyberLookAndFeel::magenta;
@@ -482,13 +482,13 @@ void AtFirstJuiceAudioProcessorEditor::paint(juce::Graphics &g) {
       (int)(20 * scale), (int)(8 * scale), (int)(420 * scale), (int)(40 * scale));
   g.setFont(CyberLookAndFeel::monoFont(28.0f * scale, true));
   g.setColour(magenta.withAlpha(0.35f));
-  g.drawText("AT FIRST JUICE", titleArea.translated(2, 2),
+  g.drawText("CP1", titleArea.translated(2, 2),
              juce::Justification::centredLeft, false);
   g.setColour(cyan);
-  g.drawText("AT FIRST JUICE", titleArea, juce::Justification::centredLeft,
+  g.drawText("CP1", titleArea, juce::Justification::centredLeft,
              false);
   g.setColour(magenta);
-  g.fillRect(juce::Rectangle<float>(20 * scale, 50 * scale, 150 * scale,
+  g.fillRect(juce::Rectangle<float>(20 * scale, 50 * scale, 90 * scale,
                                     2.0f * scale));
 
   // Scope: glowing trace of the live output.
@@ -547,7 +547,7 @@ void AtFirstJuiceAudioProcessorEditor::paint(juce::Graphics &g) {
   }
 }
 
-void AtFirstJuiceAudioProcessorEditor::resized() {
+void CP1AudioProcessorEditor::resized() {
   const float scale = (float)getWidth() / (float)kBaseWidth;
   auto area = getLocalBounds();
 
@@ -569,7 +569,7 @@ void AtFirstJuiceAudioProcessorEditor::resized() {
   prevPresetButton.setBounds(header.removeFromRight((int)(32 * scale))
                                  .reduced((int)(2 * scale), padY));
   // Scope fills the gap between the title and the preset browser.
-  scopeBounds = header.withTrimmedLeft((int)(330 * scale))
+  scopeBounds = header.withTrimmedLeft((int)(210 * scale))
                     .reduced((int)(10 * scale), (int)(8 * scale));
 
   auto body = area.reduced((int)(12 * scale), (int)(6 * scale));

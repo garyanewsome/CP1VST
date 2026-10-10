@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 
 //==============================================================================
-class AtFirstJuiceSound : public juce::SynthesiserSound
+class CP1Sound : public juce::SynthesiserSound
 {
 public:
     bool appliesToNote(int) override { return true; }
@@ -51,10 +51,10 @@ struct VoiceParams {
 };
 
 //==============================================================================
-class AtFirstJuiceVoice : public juce::SynthesiserVoice
+class CP1Voice : public juce::SynthesiserVoice
 {
 public:
-    AtFirstJuiceVoice(const VoiceParams& params);
+    CP1Voice(const VoiceParams& params);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) override;
@@ -96,12 +96,12 @@ private:
 };
 
 //==============================================================================
-class AtFirstJuiceAudioProcessor  : public juce::AudioProcessor
+class CP1AudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    AtFirstJuiceAudioProcessor();
-    ~AtFirstJuiceAudioProcessor() override;
+    CP1AudioProcessor();
+    ~CP1AudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
@@ -163,5 +163,5 @@ private:
     std::atomic<float>* distortionDepth = nullptr;
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AtFirstJuiceAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CP1AudioProcessor)
 };
