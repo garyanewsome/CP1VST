@@ -1,0 +1,9 @@
+CP1 is installed.
+
+Please quit and reopen your music software, then look for "CP1" in your
+instrument list (Gary A. Newsome / CP1).
+
+If your software does not show it, run its plugin rescan. Logic Pro does this
+automatically on launch; in other hosts it is usually in the plugin manager.
+
+To remove CP1 later, use "Uninstall CP1" from the same disk image.

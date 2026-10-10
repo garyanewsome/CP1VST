@@ -26,3 +26,6 @@
 *.vst3
 *.component
 *.app
+
+# Installer output
+/dist/
