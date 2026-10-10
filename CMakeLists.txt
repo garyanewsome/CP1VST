@@ -42,6 +42,8 @@ target_sources(AtFirstJuice
         PluginProcessor.h
         PluginEditor.cpp
         PluginEditor.h
+        CyberLookAndFeel.h
+        Presets.h
 )
 
 target_compile_definitions(AtFirstJuice
