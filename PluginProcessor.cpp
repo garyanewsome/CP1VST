@@ -444,6 +444,7 @@ void CP1AudioProcessor::setCurrentProgram(int index)
         return;
     currentProgram = index;
     Presets::applyFactory(*this, index);
+    apvts.state.setProperty("presetName", Presets::factory()[static_cast<size_t>(index)].name, nullptr);
 }
 
 const juce::String CP1AudioProcessor::getProgramName(int index)

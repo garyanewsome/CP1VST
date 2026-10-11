@@ -269,6 +269,8 @@ CP1AudioProcessorEditor::CP1AudioProcessorEditor(
   presetBox.setTextWhenNothingSelected("- PRESET -");
   presetBox.setTooltip("Choose a factory or saved preset.");
   presetBox.onChange = [this] {
+    // Remember the choice in the plugin state so it survives the window being closed and reopened.
+    audioProcessor.apvts.state.setProperty("presetName", presetBox.getItemText(presetBox.getSelectedItemIndex()), nullptr);
     const int id = presetBox.getSelectedId();
     const int nFactory = (int)Presets::factory().size();
     if (id >= 1 && id <= nFactory)
@@ -293,6 +295,16 @@ CP1AudioProcessorEditor::CP1AudioProcessorEditor(
   addAndMakeVisible(nextPresetButton);
   addAndMakeVisible(savePresetButton);
   refreshPresetList();
+  {
+    // Reselect the remembered preset (the editor is rebuilt every time the window opens).
+    const juce::String remembered = audioProcessor.apvts.state.getProperty("presetName").toString();
+    if (remembered.isNotEmpty())
+      for (int i = 0; i < presetBox.getNumItems(); ++i)
+        if (presetBox.getItemText(i) == remembered) {
+          presetBox.setSelectedItemIndex(i, juce::dontSendNotification);
+          break;
+        }
+  }
 
   midiKeyboard.setColour(juce::MidiKeyboardComponent::keyDownOverlayColourId,
                          CyberLookAndFeel::magenta.withAlpha(0.7f));
@@ -407,7 +419,7 @@ void CP1AudioProcessorEditor::promptSavePreset() {
                     const auto name = w->getTextEditorContents("name").trim();
                     if (name.isNotEmpty() &&
                         Presets::saveUser(audioProcessor, name))
-                      refreshPresetList(name);
+                      { audioProcessor.apvts.state.setProperty("presetName", name, nullptr); refreshPresetList(name); }
                   }
                 }),
       true);
